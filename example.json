@@ -2,7 +2,7 @@
   "contents": [
     {
       "source-directory": "/Users/piyush.rathi/Documents/emea-qbot,/Users/piyush.rathi/Documents/dogbert",
-      "source-file":"/Users/piyush.rathi/Documents/emea-qbot/conf/config.js",
+      "source-file":"",
       "destination-directory":"/Users/piyush.rathi/Documents/backup/",
       "zip-directory": "/Users/piyush.rathi/Documents/backup.zip",
       "sql": {

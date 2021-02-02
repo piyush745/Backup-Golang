@@ -50,6 +50,8 @@ func main() {
     set_backup_directory(backuppath)
 
     for i := 0; i < len(contents.Contents); i++ {
+      dirstr := contents.Contents[i].SourceDirectory
+      if dirstr != "" {
       dirlist := strings.Split(contents.Contents[i].SourceDirectory,",")
       for j := 0; j < len(dirlist); j++ {
         dirnames := strings.Split(dirlist[j],"/")
@@ -58,12 +60,18 @@ func main() {
         absolutePath :=backuppath+dirname
         fmt.Println(absolutePath)
         Dir(dirlist[i],absolutePath)
-      }   
+      }  
+      }
+       
   }
 
   for i := 0; i < len(contents.Contents); i++ {
-    filelist :=strings.Split(contents.Contents[i].SourceFile,",")
+    filestr := contents.Contents[i].SourceFile
+    if filestr != "" {
+      filelist :=strings.Split(contents.Contents[i].SourceFile,",")
+    fmt.Println(len(filelist))
     for j := 0; j < len(filelist); j++ {
+      fmt.Println("Entered the loop")
       filenames := strings.Split(filelist[j],"/")
       filename := filenames[len(filenames)-1]
       fmt.Println(filename)
@@ -72,12 +80,12 @@ func main() {
       File(filelist[i],absolutePath)
     }
   }
+}
  
   username := contents.Contents[0].SQL.Username
   password := contents.Contents[0].SQL.Password
   dbname := contents.Contents[0].SQL.DBname
   sql_dump(username,password,dbname,backuppath)
-  
   zipit(backuppath,zippath)
 }
 
