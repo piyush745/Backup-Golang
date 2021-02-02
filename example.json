@@ -1,13 +1,14 @@
 {
   "contents": [
     {
-      "source-directory": "/Users/piyush.rathi/Documents/backup_tool/emea-qbot copy,/Users/piyush.rathi/Documents/backup_tool/slack,/Users/piyush.rathi/Documents/backup_tool/case_assignment_engine",
-      "source-file":"/Users/piyush.rathi/Documents/backup_tool/index.js, /Users/piyush.rathi/Documents/backup_tool/shift_summary.js",
-      "destination-directory":"/Users/piyush.rathi/Documents/backup_tool/backup/",
-      "zip-directory": "/Users/piyush.rathi/Documents/backup_tool/backup.zip",
+      "source-directory": "/Users/piyush.rathi/Documents/emea-qbot,/Users/piyush.rathi/Documents/dogbert",
+      "source-file":"/Users/piyush.rathi/Documents/emea-qbot/conf/config.js",
+      "destination-directory":"/Users/piyush.rathi/Documents/backup/",
+      "zip-directory": "/Users/piyush.rathi/Documents/backup.zip",
       "sql": {
-        "username": "https://facebook.com",
-        "password": "https://twitter.com"
+        "username": "root",
+        "password": "nutanix/4u",
+        "dbname" : "test"
       }
     }
   ]

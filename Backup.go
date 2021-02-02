@@ -6,10 +6,13 @@ import (
     "strings"
 	  "io"
 	 "io/ioutil"
-	 "os"
+   "os"
 	 "path"
 	"path/filepath"
-	"archive/zip"
+  "archive/zip"
+  "database/sql"
+  _ "github.com/go-sql-driver/mysql"
+  "github.com/JamesStewy/go-mysqldump"
 )
 
 type Contents struct {
@@ -27,11 +30,11 @@ type Content struct {
 type SQL struct {
   Username string `json:"username"`
   Password  string `json:"password"`
+  DBname string `json:"dbname"`
 }
 
 func main() {
     
-    // read file
     Data, err := ioutil.ReadFile("./example.json")
     if err != nil {
       fmt.Print(err.Error())
@@ -44,6 +47,8 @@ func main() {
     }
     backuppath := contents.Contents[0].BackupDirectory
     zippath := contents.Contents[0].ZipDirectory
+    set_backup_directory(backuppath)
+
     for i := 0; i < len(contents.Contents); i++ {
       dirlist := strings.Split(contents.Contents[i].SourceDirectory,",")
       for j := 0; j < len(dirlist); j++ {
@@ -52,7 +57,7 @@ func main() {
         fmt.Println(dirname)
         absolutePath :=backuppath+dirname
         fmt.Println(absolutePath)
-        File(dirlist[i],absolutePath)
+        Dir(dirlist[i],absolutePath)
       }   
   }
 
@@ -64,11 +69,52 @@ func main() {
       fmt.Println(filename)
       absolutePath :=backuppath+filename
       fmt.Println(absolutePath)
-      Dir(filelist[i],absolutePath)
+      File(filelist[i],absolutePath)
     }
   }
+ 
+  username := contents.Contents[0].SQL.Username
+  password := contents.Contents[0].SQL.Password
+  dbname := contents.Contents[0].SQL.DBname
+  sql_dump(username,password,dbname,backuppath)
+  
   zipit(backuppath,zippath)
-  clearDir(backuppath)
+}
+
+func set_backup_directory(path string){
+  err := os.RemoveAll(path) 
+    if err != nil { 
+        fmt.Println(err)
+    } 
+  if _, err := os.Stat(path); os.IsNotExist(err) {
+    os.Mkdir(path, 0755)
+}
+}
+
+func sql_dump(username,password,dbname,backuppath string)  {
+  connectionpath := username+":"+password+"@tcp(127.0.0.1:3306)/"+dbname
+  db, err := sql.Open("mysql", connectionpath)
+	if err != nil {
+        panic(err.Error())
+  }
+  defer db.Close()
+
+  dumper, err := mysqldump.Register(db, backuppath, "sqldump")
+    if err != nil {
+    	fmt.Println("Error registering databse:", err)
+    	return
+    }
+
+    // Dump database to file
+    _,err = dumper.Dump()
+    if err != nil {
+    	fmt.Println("Error dumping:", err)
+    	return
+    }
+    fmt.Printf("File is saved ")
+
+    // Close dumper and connected database
+    dumper.Close()
 }
 
   func zipit(source, target string) error {
@@ -132,16 +178,6 @@ func main() {
     return err
   }
   
-  func clearDir (dst string)  {
-      dir, err := ioutil.ReadDir(dst);
-      if err != nil {
-        fmt.Print(err)
-      }
-      
-      for _, d := range dir {
-        os.RemoveAll(path.Join([]string{"backup", d.Name()}...))
-      }
-    }
 
   func File (src,dst string) error {
     in, err := os.Open(src)
